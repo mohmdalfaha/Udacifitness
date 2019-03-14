@@ -43,7 +43,7 @@ decrement = (metric) => {
 
     return {
       ...state,
-      [metric]: count < 0 ? 0 : c0ount
+      [metric]: count < 0 ? 0 : count
     }
   })
 }
