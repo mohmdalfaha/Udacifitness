@@ -1,11 +1,14 @@
 import React from 'react'
 import { View, TouchableOpacity, Text } from 'react-native'
-import { getMetricMetaInfo, timeToString } from '../utils/helpers'
+import { getMetricMetaInfo, timeToString, getDailyReminderValue } from '../utils/helpers'
 import UdaciSlider from './UdaciSlider'
 import Steppers from './Steppers'
 import DateHeader from './DateHeader'
 import { Ionicons } from '@expo/vector-icons'
 import TextButton from './TextButton'
+import { submitEntry, removeEntry } from '../utils/api'
+import { connect } from 'react-redux'
+import { addEntry } from '../actions/index'
 
 function SubmitBtn ({ onPress }) {
   return (
@@ -15,7 +18,8 @@ function SubmitBtn ({ onPress }) {
     </TouchableOpacity>
     )
 }
-export default class AddEntry extends React.Component {
+
+class AddEntry extends React.Component {
   state = {
     run:0,
     bike:0,
@@ -60,7 +64,9 @@ submit = () => {
   const key = timeToString()
   const entry = this.state
 
-  //Update Redux
+  this.props.dispatch(addEntry({
+    [key]: entry
+  }))
 
   this.setState(() => ({
     run:0,
@@ -71,7 +77,7 @@ submit = () => {
   }))
   //Nav to Home
 
-  //Save to 'DB'
+  submitEntry({ key, entry})
 
   //clear local notification
 }
@@ -79,12 +85,13 @@ submit = () => {
 reset = () => {
   const key = timeToString()
 
-//update Redux
+  this.props.dispatch(addEntry({
+    [key]: getDailyReminderValue()
+  }))
 
 //route to home
 
-//update db
-
+  removeEntry(key)
 }
 
 render(){
@@ -107,12 +114,15 @@ render(){
   return (
     <View>
      <DateHeader date={(new Date()).toLocaleDateString()}/>
+                     <SubmitBtn onPress={this.submit}/>
+
       {Object.keys(metaInfo).map((key) => {
         const { getIcon, type, ...rest } = metaInfo[key]
         const value = this.state[key]
 
         return (
           <View key={key}>
+
             {getIcon()}
             {type === 'slider'
             ? <UdaciSlider
@@ -130,8 +140,17 @@ render(){
           </View>
           )
       })}
-      <SubmitBtn onPress={this.submit}/>
     </View>
     )
 }
 }
+
+function mapStateToProps (state) {
+  const key = timeToString()
+
+  return {
+    alreadyLogged: state[key] && typeof state[key].today === 'undefined'
+  }
+}
+
+export default connect(mapStateToProps)(AddEntry)
