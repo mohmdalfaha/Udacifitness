@@ -18,7 +18,6 @@ function SubmitBtn ({ onPress }) {
     </TouchableOpacity>
     )
 }
-
 class AddEntry extends React.Component {
   state = {
     run:0,
@@ -114,8 +113,6 @@ render(){
   return (
     <View>
      <DateHeader date={(new Date()).toLocaleDateString()}/>
-                     <SubmitBtn onPress={this.submit}/>
-
       {Object.keys(metaInfo).map((key) => {
         const { getIcon, type, ...rest } = metaInfo[key]
         const value = this.state[key]
@@ -140,6 +137,7 @@ render(){
           </View>
           )
       })}
+        <SubmitBtn onPress={this.submit}/>
     </View>
     )
 }
