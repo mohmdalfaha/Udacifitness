@@ -106,7 +106,7 @@ render(){
           size={100}
         />
         <Text >You aleady Logged your information </Text>
-        <TextButton onPress={this.reset} style={{padding:10}}>
+        <TextButton onPress={this.reset} style={{padding:10, marginTop:10}}>
           Rest
         </TextButton>
       </View>
