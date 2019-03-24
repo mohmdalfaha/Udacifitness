@@ -12,7 +12,7 @@ export default class Live extends Component {
     direction: '',
   }
   componentDidMount () {
-    Permissions.askAsync(Permissions.LOCATION)
+    Permissions.getAsync(Permissions.LOCATION)
       .then(({ status }) => {
         if(status === 'granted') {
           return this.setLocation()
@@ -38,13 +38,13 @@ export default class Live extends Component {
       .catch((error) => console.warn('error asking Location permissoin',error))
   }
   setLocation = () => {
-    Location.whatchPositionAsync({
+    Location.watchPositionAsync({ //stupid me spelling watch as whatch lol
       enableHighAccuracy: true,
       timeInterval:1,
       distanceInterval: 1,
     }, ({ coords }) => {
-      const newDirection = calculateDirection(coords,heading)
-      const { direction } = this.state
+      const newDirection = calculateDirection(coords.heading)
+      const { direction, bounceValue  } = this.state
 
       this.setState(() => ({
         coords,
