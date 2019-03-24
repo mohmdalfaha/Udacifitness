@@ -5,10 +5,11 @@ import { createStore } from 'redux'
 import { Provider } from 'react-redux'
 import reducer from './reducers'
 import History from './components/History'
-import { createBottomTabNavigator, createAppContainer } from 'react-navigation';
+import { createBottomTabNavigator, createAppContainer, createStackNavigator } from 'react-navigation';
 import { purple, white } from './utils/colors'
 import { FontAwesome, Ionicons } from '@expo/vector-icons'
 import { Constants } from 'expo'
+import EntryDetail from './components/EntryDetail'
 
 function UdaciStatusBar ({ backgroundColor, ...props }) {
   return (
@@ -17,8 +18,6 @@ function UdaciStatusBar ({ backgroundColor, ...props }) {
     </View>
     )
 }
-
-
 
 const RouteConfigs = {
   History: {
@@ -62,13 +61,31 @@ const Tabs = createBottomTabNavigator(RouteConfigs, TabNavigatorConfig)
 
 const TabsContainer = createAppContainer(Tabs)
 
+const MainNavigator = createAppContainer(createStackNavigator({
+  Home: {
+    screen: TabsContainer,
+     navigationOptions: {
+      header: null
+    }
+  },
+  EntryDetail: {
+    screen: EntryDetail,
+    navigationOptions: {
+      headerTintColor: white,
+      headerStyle: {
+        backgroundColor: purple,
+      }
+    }
+  }
+}))
+
  export default class App extends React.Component {
   render() {
     return (
      <Provider store={createStore(reducer)}>
       <View style={{flex: 1}}>
        <UdaciStatusBar backgroundColor={purple} barStyle='light-content'/>
-       <TabsContainer/>
+       <MainNavigator/>
       </View>
      </Provider>
     )
