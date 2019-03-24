@@ -38,7 +38,7 @@ class EntryDetail extends Component {
     return (
           <View style={styles.container}>
             <MetricCard metrics={metrics} />
-            <TextButton onPress={this.reset} style={{margin: 20}}>
+            <TextButton onPress={this.reset} style={{margin: 10}}>
               RESET
             </TextButton>
           </View>
