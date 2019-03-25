@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import {View,Text, ActivityIndicator, TouchableOpacity, StyleSheet} from 'react-native'
+import {View,Text, ActivityIndicator, TouchableOpacity, StyleSheet, Animated} from 'react-native'
 import { Foundation } from '@expo/vector-icons'
 import { purple, white } from '../utils/colors'
 import { Location, Permissions } from 'expo'
@@ -10,6 +10,7 @@ export default class Live extends Component {
     coords: 0,
     status: 'granted',
     direction: '',
+    bounceValue: new Animated.Value(1),
   }
   componentDidMount () {
     Permissions.getAsync(Permissions.LOCATION)
@@ -43,9 +44,15 @@ export default class Live extends Component {
       timeInterval:1,
       distanceInterval: 1,
     }, ({ coords }) => {
-      const newDirection = calculateDirection(coords.heading)
+      const newDirection = calculateDirection(coords.heading) // one more stupid me here put ,header
       const { direction, bounceValue  } = this.state
 
+      if(newDirection !== direction){
+        Animated.sequence([
+                  Animated.timing(bounceValue, {duration: 200, toValue: 1.02}),
+                  Animated.spring(bounceValue, {toValue: 1, friction:4})
+                ]).start()
+      }
       this.setState(() => ({
         coords,
         status: 'granted',
@@ -54,7 +61,7 @@ export default class Live extends Component {
     })
   }
   render() {
-    const { status, coords, direction } = this.state
+    const { status, coords, direction, bounceValue } = this.state
 
     if ( status === null ) {
       return  <ActivityIndicator style={{marginTop: 30}} />
@@ -90,9 +97,9 @@ export default class Live extends Component {
       <View style={styles.container}>
           <View style={styles.directionContainer}>
           <Text style={styles.header}>You're heading</Text>
-          <Text style={styles.direction}>
+          <Animated.Text style={[styles.direction,{transform: [{scale:bounceValue}]}]}>
             {direction}
-          </Text>
+          </Animated.Text>
         </View>
         <View style={styles.metricContainer}>
           <View style={styles.metric}>
